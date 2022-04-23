@@ -1,6 +1,6 @@
 # Certificates
 
-Just a quick POC to help create certificates from the CLI. No Zen!
+Just a quick POC to help create certificates from the CLI. *No Zen!*
 
 Uses subprocess.Popen() or the more recent wrapper, subprocess.run() to run the well known OpenSSL command to create various certs.
 
