@@ -10,6 +10,7 @@ current = os.getcwd()
 private = "tls/private"
 certs = "tls/certs"
 openssl = "tls/openssl.cnf"
+#openssl = "tls/self_signed_certificate.cnf"
 
 # Log file location ------------------------------------------------
 logfile = 'debug.log'
@@ -107,7 +108,7 @@ def editSSLConf(cwd, ssl, pvt, back, tmp):
                 output_f.write(lines)
             else:
                 line.pop(2)
-                line.insert(2, privatePath)
+                line.insert(2, cwd)
                 new_line = ' '.join(line)
                 output_f.write(new_line + " \n")
 
@@ -127,7 +128,6 @@ def listCurves():
 
 
 def listFiles(cwd):
-    #cwd = os.getcwd()
     # creating list of path
     path = os.path.join(cwd)
     files = (os.listdir(path))
@@ -207,7 +207,7 @@ sourceWorkingDirectory(current, private, certs, index, serial, source, openssl)
 
 backupFile = "tls/openssl.cnf.bak"
 tmpFile = "/tmp/openssl.txt"
-editSSLConf(current, openssl, private, backupFile, tmpFile)
+#editSSLConf(current, openssl, private, backupFile, tmpFile)
 
 #listFiles(current)
 #listCurves()

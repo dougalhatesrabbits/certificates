@@ -37,7 +37,9 @@ def run(cmd):
 
 def generatePrivateKey():
     # Define command as string and then split() into list format
-    command = 'openssl genrsa -passout file:mypass.enc -out server.key 4096'.split()
+    command = 'openssl genrsa \
+               -passout file:mypass.enc \
+               -out server.key 4096'.split()
     # genpkey has superceded genrsa
     # cmd = 'openssl genpkey -passout file:mypass.enc -out server.key 4096'.split()
     # Check the list value of cmd
@@ -47,8 +49,12 @@ def generatePrivateKey():
 
 
 def generateCSR():
-    command = 'openssl req -new -key server.key -out server.csr \
-           -passin file:mypass.enc -config self_signed_certificate.cnf'.split()
+    command = 'openssl req \
+               -new \
+               -key server.key \
+               -out server.csr \
+               -passin file:mypass.enc \
+               -config self_signed_certificate.cnf'.split()
     print('command in list format:', command)
     run(command)
     verifyCSR()
@@ -68,21 +74,31 @@ def generateX509cert():
 
 
 def verifyPrivateKey():
-    command = 'openssl rsa -noout -text -in server.key -passin file:mypass.enc'.split()
+    command = 'openssl rsa \
+               -noout \
+               -text \
+               -in server.key \
+               -passin file:mypass.enc'.split()
     # Check the list value of cmd
     print('command in list format:', command)
     run(command)
 
 
 def verifyCSR():
-    command = 'openssl req -noout -text -in server.csr'.split()
+    command = 'openssl req \
+               -noout \
+               -text \
+               -in server.csr'.split()
     # Check the list value of cmd
     print('command in list format:', command)
     run(command)
 
 
 def verifySelfSignedCert():
-    command = 'openssl x509 -noout -text -in server.crt'.split()
+    command = 'openssl x509 \
+               -noout \
+               -text \
+               -in server.crt'.split()
     # Check the list value of cmd
     print('command in list format:', command)
     run(command)
