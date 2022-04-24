@@ -1,0 +1,37 @@
+Certificate:
+    Data:
+        Version: 1 (0x0)
+        Serial Number: 2 (0x2)
+        Signature Algorithm: ecdsa-with-SHA256
+        Issuer: C=UK, ST=Cambs, L=Cambridge, O=Labs, OU=CyberSec, CN=ca.ubuntu
+        Validity
+            Not Before: Apr 24 21:48:12 2022 GMT
+            Not After : Apr 24 21:48:12 2023 GMT
+        Subject: C=UK, ST=Cambs, O=Labs, OU=CyberSec, CN=client.ubuntu
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:9f:4d:d8:dc:95:9f:88:f4:7a:1a:a5:66:19:f4:
+                    40:b0:bb:7e:db:1f:20:24:ec:00:53:e2:1a:d8:40:
+                    e8:f5:cc:26:28:c1:2d:41:57:62:30:67:58:8f:12:
+                    0d:f5:ba:9f:5b:7d:2e:04:e1:9d:a3:56:98:2b:dd:
+                    2b:e0:0d:9c:35
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+    Signature Algorithm: ecdsa-with-SHA256
+         30:46:02:21:00:c9:25:86:79:d9:31:ec:42:2b:65:36:5c:73:
+         30:9d:c7:5a:74:30:4e:e9:ed:eb:66:c5:96:e1:d3:a8:86:7c:
+         6a:02:21:00:dd:e0:15:f8:9f:0a:54:b6:eb:d9:4f:3c:b5:f3:
+         d8:f8:f0:ae:d7:7b:5c:1a:ae:fe:a4:6c:9e:e1:ee:5d:47:91
+-----BEGIN CERTIFICATE-----
+MIIBpzCCAUwCAQIwCgYIKoZIzj0EAwIwZzELMAkGA1UEBhMCVUsxDjAMBgNVBAgM
+BUNhbWJzMRIwEAYDVQQHDAlDYW1icmlkZ2UxDTALBgNVBAoMBExhYnMxETAPBgNV
+BAsMCEN5YmVyU2VjMRIwEAYDVQQDDAljYS51YnVudHUwHhcNMjIwNDI0MjE0ODEy
+WhcNMjMwNDI0MjE0ODEyWjBXMQswCQYDVQQGEwJVSzEOMAwGA1UECAwFQ2FtYnMx
+DTALBgNVBAoMBExhYnMxETAPBgNVBAsMCEN5YmVyU2VjMRYwFAYDVQQDDA1jbGll
+bnQudWJ1bnR1MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEn03Y3JWfiPR6GqVm
+GfRAsLt+2x8gJOwAU+Ia2EDo9cwmKMEtQVdiMGdYjxIN9bqfW30uBOGdo1aYK90r
+4A2cNTAKBggqhkjOPQQDAgNJADBGAiEAySWGedkx7EIrZTZcczCdx1p0ME7p7etm
+xZbh06iGfGoCIQDd4BX4nwpUtuvZTzy189j48K7Xe1warv6kbJ7h7l1HkQ==
+-----END CERTIFICATE-----
