@@ -1,50 +1,15 @@
-import subprocess
-import logging
-import sys
+import helper
 import os
 
 projectLocation = os.getcwd()
 baseTlsLocation = os.path.join(projectLocation, "tls")
 privateFolder = os.path.join(baseTlsLocation, "private")
 certsFolder = os.path.join(baseTlsLocation, "certs")
-opensslConf = os.path.join(baseTlsLocation, "openssl.cnf")
-#opensslConf = os.path.join(baseTlsLocation, "self_signed_certificate.cnf")
-encPasswordFile = os.path.join(baseTlsLocation, "mypass.enc")
+#opensslConf = os.path.join(baseTlsLocation, "openssl.cnf")
+opensslConf = os.path.join(baseTlsLocation, "self_signed_certificate.cnf")
 privateKey = os.path.join(certsFolder, "server-noenc.key")
 selfCertificate = os.path.join(certsFolder, "servernoenc.crt")
 selfCSR = os.path.join(certsFolder, "server-noenc.csr")
-
-# Log file location
-logfile = os.path.join(projectLocation, 'debug.log')
-# Define the log format
-log_format = (
-    '[%(asctime)s] %(levelname)-8s %(name)-12s %(message)s')
-
-# Define basic configuration
-logging.basicConfig(
-    # Define logging level
-    level=logging.DEBUG,
-    # Define the format of log messages
-    format=log_format,
-    # Declare handlers
-    handlers=[
-        logging.FileHandler(logfile),
-        logging.StreamHandler(sys.stdout),
-    ]
-)
-# Define logger name
-logger = logging.getLogger("cert_logger")
-
-
-def run(cmd):
-    sp = subprocess.run(cmd,
-                        shell=False,
-                        check=True,
-                        capture_output=True,
-                        text=True)
-    print("stdout: ", sp.stdout)
-    print("stderr: ", sp.stderr)
-    logger.error(sp.stderr)
 
 
 def generate_private_key(key):
@@ -58,13 +23,12 @@ def generate_private_key(key):
 
     try:
         print('command in list format:', command)
-        run(command)
+        helper.run(command)
+        verify_private_key(key)
     except OSError as error:
-        logger.error(error)
-    except subprocess.CalledProcessError as error:
-        logger.error(error)
-
-    verify_private_key(key)
+        helper.logger.error(error)
+    except helper.subprocess.CalledProcessError as error:
+        helper.logger.error(error)
 
 
 def generate_csr(key, csr, cfg):
@@ -77,18 +41,17 @@ def generate_csr(key, csr, cfg):
     command.insert(4, key)
     command.pop(6)
     command.insert(6, csr)
-    command.pop(10)
-    command.insert(10, cfg)
+    command.pop(8)
+    command.insert(8, cfg)
 
     try:
         print('command in list format:', command)
-        run(command)
+        helper.run(command)
+        verify_csr(csr)
     except OSError as error:
-        logger.error(error)
-    except subprocess.CalledProcessError as error:
-        logger.error(error)
-
-    verify_csr(csr)
+        helper.logger.error(error)
+    except helper.subprocess.CalledProcessError as error:
+        helper.logger.error(error)
 
 
 def generate_x509_cert(csr, key, crt):
@@ -104,9 +67,14 @@ def generate_x509_cert(csr, key, crt):
     command.insert(8, key)
     command.pop(10)
     command.insert(10, crt)
-    print('command in list format:', command)
-    run(command)
-    verify_self_signed_cert(crt)
+    try:
+        print('command in list format:', command)
+        helper.run(command)
+        verify_self_signed_cert(crt)
+    except OSError as error:
+        helper.logger.error(error)
+    except helper.subprocess.CalledProcessError as error:
+        helper.logger.error(error)
 
 
 def verify_private_key(key):
@@ -117,8 +85,13 @@ def verify_private_key(key):
     command.pop(5)
     command.insert(5, key)
 
-    print('command in list format:', command)
-    run(command)
+    try:
+        print('command in list format:', command)
+        helper.run(command)
+    except OSError as error:
+        helper.logger.error(error)
+    except helper.subprocess.CalledProcessError as error:
+        helper.logger.error(error)
 
 
 def verify_csr(csr):
@@ -128,8 +101,13 @@ def verify_csr(csr):
                -in server-noenc.csr'.split()
     command.pop(5)
     command.insert(5, csr)
-    print('command in list format:', command)
-    run(command)
+    try:
+        print('command in list format:', command)
+        helper.run(command)
+    except OSError as error:
+        helper.logger.error(error)
+    except helper.subprocess.CalledProcessError as error:
+        helper.logger.error(error)
 
 
 def verify_self_signed_cert(crt):
@@ -139,14 +117,19 @@ def verify_self_signed_cert(crt):
                -in server.crt'.split()
     command.pop(5)
     command.insert(5, crt)
-    print('command in list format:', command)
-    run(command)
+    try:
+        print('command in list format:', command)
+        helper.run(command)
+    except OSError as error:
+        helper.logger.error(error)
+    except helper.subprocess.CalledProcessError as error:
+        helper.logger.error(error)
 
 
-# ---main---
-generate_private_key(privateKey)
-generate_csr(privateKey, selfCSR, opensslConf)
-generate_x509_cert(selfCSR, privateKey, selfCertificate)
+if __name__ == '__main__':
+    generate_private_key(privateKey)
+    generate_csr(privateKey, selfCSR, opensslConf)
+    generate_x509_cert(selfCSR, privateKey, selfCertificate)
 
 
 
