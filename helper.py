@@ -26,6 +26,7 @@ def run(cmd):
                         check=True,
                         capture_output=True,
                         text=True)
+
     print("stdout: ", sp.stdout)
     print("stderr: ", sp.stderr)
     logger.error(sp.stderr)

@@ -1,7 +1,6 @@
 import helper
 import os
-
-TODO: "generate_server_cert - needs allow input to confirm serial & index on cli"
+from subprocess import Popen, PIPE
 
 # Working area
 projectLocation = os.getcwd()
@@ -211,7 +210,7 @@ def generate_ca_cert(ssl, key, cert):
         helper.logger.error(error)
 
 
-def generate_server_csr(key, csr, cfg):
+def generate_csr(key, csr, cfg):
     command = 'openssl req \
                    -new \
                    -key server.key \
@@ -233,7 +232,7 @@ def generate_server_csr(key, csr, cfg):
         helper.logger.error(error)
 
 
-def generate_server_cert(key, cacert, csr, srvcert, cfg):
+def generate_cert(key, cacert, csr, cert, cfg):
     command = 'openssl ca \
               -keyfile /root/tls/private/ec-cakey.pem \
               -cert /root/tls/certs/ec-cacert.pem \
@@ -247,13 +246,25 @@ def generate_server_cert(key, cacert, csr, srvcert, cfg):
     command.pop(7)
     command.insert(7, csr)
     command.pop(9)
-    command.insert(9, srvcert)
+    command.insert(9, cert)
     command.pop(11)
     command.insert(11, cfg)
+    # run the openssl and input 2 confirmations
     try:
         print('command in list format:', command)
+        sp = Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE, text=True)
+        sp.communicate(os.linesep.join(["y", "y"]))
+        # Store the return code in rc variable
+        rc = sp.wait()
+
+        # Separate the output and error.
+        out, err = sp.communicate()
+
+        print('Return Code:', rc, '\n')
+        print('output is: \n', out)
+        print('error is: \n', err)
         #helper.run(command)
-        verify_server_cert(cacert, srvcert)
+        #verify_server_cert(cacert, srvcert)
     except OSError as error:
         helper.logger.error(error)
     except helper.subprocess.CalledProcessError as error:
@@ -262,17 +273,17 @@ def generate_server_cert(key, cacert, csr, srvcert, cfg):
 
 if __name__ == '__main__':
     # ---CA---
-    list_curves()
+    # list_curves()
     # generate_ecc_private_key(privateKey)
-    # generate_ca_cert(opensslConf, privateKey, caCertificate)
+    # generate_ca_cert(ca_opensslConf, privateKey, caCertificate)
     # ---Server---
     # generate_ecc_private_key(serverKey)
-    # generate_server_csr(serverKey, serverCSR, opensslConf)
-    # generate_server_cert(privateKey, caCertificate, serverCSR, serverCert, opensslConf)
+    # generate_csr(serverKey, serverCSR, server_opensslConf)
+    # generate_cert(privateKey, caCertificate, serverCSR, serverCert, server_opensslConf)
     # ---Client---
     # generate_ecc_private_key(clientKey)
-    # generate_server_csr(clientKey, clientCSR, client_opensslConf)
-    # generate_server_cert(privateKey, caCertificate, clientCSR, clientCert, client_opensslConf)
+    # generate_csr(clientKey, clientCSR, client_opensslConf)
+     generate_cert(privateKey, caCertificate, clientCSR, clientCert, client_opensslConf)
     # list_files(projectLocation)
 
 
