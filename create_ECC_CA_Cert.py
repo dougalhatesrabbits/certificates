@@ -1,22 +1,41 @@
 import helper
 import os
 
+TODO: "generate_server_cert - needs allow input to confirm serial & index on cli"
 
+# Working area
 projectLocation = os.getcwd()
 baseTlsLocation = os.path.join(projectLocation, "tls")
+opensslConf = os.path.join(baseTlsLocation, "openssl.cnf")
+
+# Self-Signed/CA
 privateFolder = os.path.join(baseTlsLocation, "private")
 certsFolder = os.path.join(baseTlsLocation, "certs")
-serverFolder = os.path.join(baseTlsLocation, "server_certs")
-#opensslConf = os.path.join(baseTlsLocation, "openssl.cnf")
-#opensslConf = os.path.join(baseTlsLocation, "self_signed_certificate.cnf")
-opensslConf = os.path.join(baseTlsLocation, "ca_cert.cnf")
-encPasswordFile = os.path.join(baseTlsLocation, "mypass.enc")
 privateKey = os.path.join(privateFolder, "ec-cakey.pem")
 caCertificate = os.path.join(certsFolder, "ec-cacert.pem")
 serialFile = os.path.join(baseTlsLocation, "serial")
 indexFile = os.path.join(baseTlsLocation, "index.txt")
 selfCertificate = os.path.join(certsFolder, "server.crt")
 selfCSR = os.path.join(certsFolder, "server.csr")
+self_opensslConf = os.path.join(baseTlsLocation, "self_signed_certificate.cnf")
+ca_opensslConf = os.path.join(baseTlsLocation, "ca_cert.cnf")
+
+# Server
+serverFolder = os.path.join(baseTlsLocation, "server_certs")
+serverKey = os.path.join(serverFolder, "server.key")
+serverCSR = os.path.join(serverFolder, "server.csr")
+serverCert = os.path.join(serverFolder, "server.crt")
+server_opensslConf = os.path.join(baseTlsLocation, "server_cert.cnf")
+
+# Client
+clientFolder = os.path.join(baseTlsLocation, "client_certs")
+clientKey = os.path.join(clientFolder, "client.key")
+clientCSR = os.path.join(clientFolder, "client.csr")
+clientCert = os.path.join(clientFolder, "client.crt")
+client_opensslConf = os.path.join(baseTlsLocation, "client_cert.cnf")
+
+# Private key password file (option)
+encPasswordFile = os.path.join(baseTlsLocation, "mypass.enc")
 
 
 def list_curves():
@@ -101,6 +120,56 @@ def verify_ca_cert(cert, key):
         helper.logger.error(error)
 
 
+def verify_server_csr(csr):
+    command = 'openssl req \
+               -noout \
+               -text \
+               -in server.csr'.split()
+    command.pop(5)
+    command.insert(5, csr)
+    try:
+        print('command in list format:', command)
+        helper.run(command)
+    except OSError as error:
+        helper.logger.error(error)
+    except helper.subprocess.CalledProcessError as error:
+        helper.logger.error(error)
+
+
+def verify_server_cert(cacert, srvcert):
+    command = 'openssl verify \
+               -CAfile /root/tls/certs/ec-cacert.pem server.crt'.split()
+    command.pop(3)
+    command.insert(3, cacert)
+    command.pop(4)
+    command.insert(4, srvcert)
+    try:
+        print('command in list format:', command)
+        helper.run(command)
+    except OSError as error:
+        helper.logger.error(error)
+    except helper.subprocess.CalledProcessError as error:
+        helper.logger.error(error)
+
+    command = 'openssl x509 \
+               -noout \
+               -text \
+               -in server.crt'.split()
+    command.pop(5)
+    command.insert(5, srvcert)
+    try:
+        print('command in list format:', command)
+        helper.run(command)
+    except OSError as error:
+        helper.logger.error(error)
+    except helper.subprocess.CalledProcessError as error:
+        helper.logger.error(error)
+
+    with open(indexFile, "r+") as f:
+        print("\nIndex file entry\n----------------")
+        print(f.read())
+
+
 def generate_ecc_private_key(key):
     command = "openssl ecparam \
                -out private/ec-cakey.pem \
@@ -142,11 +211,69 @@ def generate_ca_cert(ssl, key, cert):
         helper.logger.error(error)
 
 
+def generate_server_csr(key, csr, cfg):
+    command = 'openssl req \
+                   -new \
+                   -key server.key \
+                   -out server.csr \
+                   -config tls/self_signed_certificate.cnf'.split()
+    command.pop(4)
+    command.insert(4, key)
+    command.pop(6)
+    command.insert(6, csr)
+    command.pop(8)
+    command.insert(8, cfg)
+    try:
+        print('command in list format:', command)
+        helper.run(command)
+        verify_server_csr(csr)
+    except OSError as error:
+        helper.logger.error(error)
+    except helper.subprocess.CalledProcessError as error:
+        helper.logger.error(error)
+
+
+def generate_server_cert(key, cacert, csr, srvcert, cfg):
+    command = 'openssl ca \
+              -keyfile /root/tls/private/ec-cakey.pem \
+              -cert /root/tls/certs/ec-cacert.pem \
+              -in server.csr \
+              -out server.crt \
+              -config /root/tls/openssl.cnf'.split()
+    command.pop(3)
+    command.insert(3, key)
+    command.pop(5)
+    command.insert(5, cacert)
+    command.pop(7)
+    command.insert(7, csr)
+    command.pop(9)
+    command.insert(9, srvcert)
+    command.pop(11)
+    command.insert(11, cfg)
+    try:
+        print('command in list format:', command)
+        #helper.run(command)
+        verify_server_cert(cacert, srvcert)
+    except OSError as error:
+        helper.logger.error(error)
+    except helper.subprocess.CalledProcessError as error:
+        helper.logger.error(error)
+
+
 if __name__ == '__main__':
+    # ---CA---
     list_curves()
-    generate_ecc_private_key(privateKey)
-    generate_ca_cert(opensslConf, privateKey, caCertificate)
-    #list_files(projectLocation)
+    # generate_ecc_private_key(privateKey)
+    # generate_ca_cert(opensslConf, privateKey, caCertificate)
+    # ---Server---
+    # generate_ecc_private_key(serverKey)
+    # generate_server_csr(serverKey, serverCSR, opensslConf)
+    # generate_server_cert(privateKey, caCertificate, serverCSR, serverCert, opensslConf)
+    # ---Client---
+    # generate_ecc_private_key(clientKey)
+    # generate_server_csr(clientKey, clientCSR, client_opensslConf)
+    # generate_server_cert(privateKey, caCertificate, clientCSR, clientCert, client_opensslConf)
+    # list_files(projectLocation)
 
 
 
