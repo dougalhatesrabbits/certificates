@@ -11,14 +11,12 @@ log_format = (
 
 logging.basicConfig(
     level=logging.DEBUG,
-    # Define the format of log messages
     format=log_format,
     handlers=[
         logging.FileHandler(logfile),
         logging.StreamHandler(sys.stdout),
     ]
 )
-# Define logger name
 logger = logging.getLogger("cert_logger")
 
 

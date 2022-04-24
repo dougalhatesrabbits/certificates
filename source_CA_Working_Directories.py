@@ -4,6 +4,8 @@ import sys
 import os
 import shutil
 
+TODO:
+ #Work in progress
 
 #current = os.getcwd()
 # ECC locations
@@ -15,6 +17,7 @@ projectLocation = os.getcwd()
 baseTlsLocation = os.path.join(projectLocation, "tls")
 privateFolder = os.path.join(baseTlsLocation, "private")
 certsFolder = os.path.join(baseTlsLocation, "certs")
+serverFolder = os.path.join(baseTlsLocation, "server_certs")
 opensslConf = os.path.join(baseTlsLocation, "openssl.cnf")
 secretFile = os.path.join(baseTlsLocation, "mypass")
 clearPasswordFile = os.path.join(projectLocation, secretFile)
