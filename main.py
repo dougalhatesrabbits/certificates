@@ -3,6 +3,7 @@ import os
 import create_selfSignedCert
 import create_selfSignedCert_noenc
 import create_ECC_CA_Cert
+import revoke_Cert
 
 TODO: "Encrypt log file possibly. Private keys are password protected with encrypted password file though. " \
       "Only relevant for non password protected key option!"
@@ -30,20 +31,23 @@ indexFile = os.path.join(baseTlsLocation, "index.txt")
 
 # Server
 serverFolder = os.path.join(baseTlsLocation, "server_certs")
-serverKey = os.path.join(privateFolder, "server.key")
-serverCSR = os.path.join(serverFolder, "server.csr")
-serverCert = os.path.join(serverFolder, "server.crt")
+serverKey = os.path.join(privateFolder, "server2.key")
+serverCSR = os.path.join(serverFolder, "server2.csr")
+serverCert = os.path.join(serverFolder, "server2.crt")
 server_opensslConf = os.path.join(baseTlsLocation, "server_cert.cnf")
+caCrlFolder = os.path.join(baseTlsLocation, "crl")
+caCrlFile = os.path.join(caCrlFolder, "rootca.crl")
 
 # Client
 clientFolder = os.path.join(baseTlsLocation, "client_certs")
-clientKey = os.path.join(privateFolder, "client.key")
-clientCSR = os.path.join(clientFolder, "client.csr")
-clientCert = os.path.join(clientFolder, "client.crt")
+clientKey = os.path.join(privateFolder, "client2.key")
+clientCSR = os.path.join(clientFolder, "client2.csr")
+clientCert = os.path.join(clientFolder, "client2.crt")
 client_opensslConf = os.path.join(baseTlsLocation, "client_cert.cnf")
 
 # Private key password file (option)
 encPasswordFile = os.path.join(privateFolder, "mypass.enc")
+
 
 
 if __name__ == '__main__':
@@ -68,4 +72,7 @@ if __name__ == '__main__':
     #create_ECC_CA_Cert.generate_ecc_private_key(clientKey)
     #create_ECC_CA_Cert.generate_csr(clientKey, clientCSR, client_opensslConf)
     #create_ECC_CA_Cert.generate_cert(caKey, caCertificate, clientCSR, clientCert, client_opensslConf, indexFile)
-    create_ECC_CA_Cert.list_files(projectLocation)
+    #create_ECC_CA_Cert.list_files(projectLocation)
+
+    revoke_Cert.revoke_cert(server_opensslConf, serverCert, indexFile)
+    revoke_Cert.generate_revocation_list(server_opensslConf, caCrlFile)
