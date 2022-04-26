@@ -2,17 +2,27 @@ import os
 import logging
 import subprocess
 import sys
-
-TODO: "Encrypt log file possibly. Private keys are password protected with encrypted password file though. " \
-      "Only relevant for non password protected key option!"
+import argparse
 
 projectLocation = os.getcwd()
 logfile = os.path.join(projectLocation, 'debug.log')
 log_format = (
     "[%(asctime)s] %(levelname)-8s %(name)-12s %(message)s")
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument('-l', '--log',
+                    choices=('error', 'debug'),
+                    dest='level',
+                    default='error',
+                    help='Sets the logging level',
+                    type=str
+                    )
+parser.add_argument('--version', action='version', version='%(prog)s 0.7')
+args = parser.parse_args()
+
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.ERROR,
     format=log_format,
     handlers=[
         logging.FileHandler(logfile),
@@ -20,6 +30,8 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger("cert_logger")
+if args.level == "debug":
+    logger.setLevel(logging.DEBUG)
 
 
 # https://docs.python.org/3.8/library/subprocess.html#
@@ -46,5 +58,3 @@ def run(cmd):
         logger.error(e.output)
 
     return rc
-
-
