@@ -7,8 +7,7 @@ TODO: "Encrypt log file possibly. Private keys are password protected with encry
       "Only relevant for non password protected key option!"
 
 projectLocation = os.getcwd()
-baseTlsLocation = os.path.join(projectLocation, "tls")
-logfile = os.path.join(baseTlsLocation, 'debug.log')
+logfile = os.path.join(projectLocation, 'debug.log')
 log_format = (
     "[%(asctime)s] %(levelname)-8s %(name)-12s %(message)s")
 
