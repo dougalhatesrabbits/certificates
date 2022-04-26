@@ -1,4 +1,5 @@
-import helper
+from helper import run, logger
+from subprocess import CalledProcessError
 import os
 
 projectLocation = os.getcwd()
@@ -23,12 +24,12 @@ def generate_private_key(key):
 
     try:
         print('command in list format:', command)
-        helper.run(command)
+        run(command)
         verify_private_key(key)
     except OSError as error:
-        helper.logger.error(error)
-    except helper.subprocess.CalledProcessError as error:
-        helper.logger.error(error)
+        logger.error(error)
+    except CalledProcessError as error:
+        logger.error(error)
 
 
 def generate_csr(key, csr, cfg):
@@ -46,12 +47,12 @@ def generate_csr(key, csr, cfg):
 
     try:
         print('command in list format:', command)
-        helper.run(command)
+        run(command)
         verify_csr(csr)
     except OSError as error:
-        helper.logger.error(error)
-    except helper.subprocess.CalledProcessError as error:
-        helper.logger.error(error)
+        logger.error(error)
+    except CalledProcessError as error:
+        logger.error(error)
 
 
 def generate_x509_cert(csr, key, crt):
@@ -69,12 +70,12 @@ def generate_x509_cert(csr, key, crt):
     command.insert(10, crt)
     try:
         print('command in list format:', command)
-        helper.run(command)
+        run(command)
         verify_self_signed_cert(crt)
     except OSError as error:
-        helper.logger.error(error)
-    except helper.subprocess.CalledProcessError as error:
-        helper.logger.error(error)
+        logger.error(error)
+    except CalledProcessError as error:
+        logger.error(error)
 
 
 def verify_private_key(key):
@@ -87,11 +88,11 @@ def verify_private_key(key):
 
     try:
         print('command in list format:', command)
-        helper.run(command)
+        run(command)
     except OSError as error:
-        helper.logger.error(error)
-    except helper.subprocess.CalledProcessError as error:
-        helper.logger.error(error)
+        logger.error(error)
+    except CalledProcessError as error:
+        logger.error(error)
 
 
 def verify_csr(csr):
@@ -103,11 +104,11 @@ def verify_csr(csr):
     command.insert(5, csr)
     try:
         print('command in list format:', command)
-        helper.run(command)
+        run(command)
     except OSError as error:
-        helper.logger.error(error)
-    except helper.subprocess.CalledProcessError as error:
-        helper.logger.error(error)
+        logger.error(error)
+    except CalledProcessError as error:
+        logger.error(error)
 
 
 def verify_self_signed_cert(crt):
@@ -119,11 +120,11 @@ def verify_self_signed_cert(crt):
     command.insert(5, crt)
     try:
         print('command in list format:', command)
-        helper.run(command)
+        run(command)
     except OSError as error:
-        helper.logger.error(error)
-    except helper.subprocess.CalledProcessError as error:
-        helper.logger.error(error)
+        logger.error(error)
+    except CalledProcessError as error:
+        logger.error(error)
 
 
 if __name__ == '__main__':

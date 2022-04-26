@@ -1,2 +1,2 @@
-V	230424213647Z		01	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=server.ubuntu
-V	230424214812Z		02	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=client.ubuntu
+V	230426082818Z		01	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=server.ubuntu
+V	230426082945Z		02	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=client.ubuntu

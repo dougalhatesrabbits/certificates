@@ -15,9 +15,9 @@ certsFolder = os.path.join(baseTlsLocation, "certs")
 caKey = os.path.join(privateFolder, "ec-cakey.pem")
 caCertificate = os.path.join(certsFolder, "ec-cacert.pem")
 ca_opensslConf = os.path.join(baseTlsLocation, "ca_cert.cnf")
-selfKey = os.path.join(privateFolder, "server.key")
-selfCertificate = os.path.join(certsFolder, "server.crt")
-selfCSR = os.path.join(certsFolder, "server.csr")
+selfKey = os.path.join(privateFolder, "self.key")
+selfCertificate = os.path.join(certsFolder, "self.crt")
+selfCSR = os.path.join(certsFolder, "self.csr")
 self_opensslConf = os.path.join(baseTlsLocation, "self_signed_certificate.cnf")
 serialFile = os.path.join(baseTlsLocation, "serial")
 indexFile = os.path.join(baseTlsLocation, "index.txt")
@@ -173,7 +173,8 @@ def verify_self_signed_cert(crt):
     command.insert(5, crt)
     try:
         logger.debug(("Command executed:", ' '.join(command)))
-        run(command)
+        rc = run(command)
+        logger.debug("*** verify_self_signed_cert *** return code: %s", rc)
     except OSError as error:
         logger.error(error)
     except CalledProcessError as error:
@@ -183,7 +184,7 @@ def verify_self_signed_cert(crt):
 if __name__ == '__main__':
     generate_private_key(encPasswordFile, selfKey)
     generate_csr(selfKey, selfCSR, encPasswordFile, self_opensslConf)
-    generate_x509_cert(selfCSR, caKey, selfCertificate, encPasswordFile)
+    generate_x509_cert(selfCSR, selfKey, selfCertificate, encPasswordFile)
 
 
 

@@ -127,8 +127,8 @@ string_mask = utf8only
 # req_extensions = v3_req # The extensions to add to a certificate request
 
 [ req_distinguished_name ]
-countryName			    = "UK"
-countryName_default		= "UK"
+countryName			    = UK
+countryName_default		= UK
 countryName_min			= 2
 countryName_max			= 2
 
@@ -147,7 +147,7 @@ localityName			= Cambridge
 organizationalUnitName		= "CyberSec"
 #organizationalUnitName_default	=
 
-commonName			= local.ubuntu
+commonName			= local
 commonName_max			= 64
 
 emailAddress			= Email Address

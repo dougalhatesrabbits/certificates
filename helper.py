@@ -8,10 +8,9 @@ TODO: "Encrypt log file possibly. Private keys are password protected with encry
 
 projectLocation = os.getcwd()
 baseTlsLocation = os.path.join(projectLocation, "tls")
-privateFolder = os.path.join(baseTlsLocation, "private")
-logfile = os.path.join(privateFolder, 'debug.log')
+logfile = os.path.join(baseTlsLocation, 'debug.log')
 log_format = (
-    '[%(asctime)s] %(levelname)-8s %(name)-12s %(message)s')
+    "[%(asctime)s] %(levelname)-8s %(name)-12s %(message)s")
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -27,21 +26,6 @@ logger = logging.getLogger("cert_logger")
 # https://docs.python.org/3.8/library/subprocess.html#
 def run(cmd):
     rc = 0
-    '''
-    sp = subprocess.run(cmd,
-                        # Dont like 'shell=True' for security reasons of unsanitised input
-                        # https://docs.python.org/2/library/subprocess.html#frequently-used-arguments
-                        shell=False,
-                        check=True,
-                        capture_output=True,
-                        text=True)
-    #print("stdout: ", sp.stdout)
-    #if sp.stderr != "":
-        #print("stderr: ", sp.stderr)
-    logger.error(sp.stderr)
-    logger.debug(sp.stdout)
-    #print("stderr: ", sp.stderr)
-    '''
 
     try:
         sp = subprocess.Popen(cmd,
