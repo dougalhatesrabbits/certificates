@@ -1,2 +1,2 @@
-V	230426082818Z		01	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=server
-V	230426082945Z		02	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=client
+R	230427172107Z	220427172111Z	01	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=server
+V	230427172110Z		02	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=client

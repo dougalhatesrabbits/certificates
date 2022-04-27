@@ -3,6 +3,10 @@ import logging
 import subprocess
 import sys
 import argparse
+from configparser import ConfigParser
+
+cfg = ConfigParser()
+cfg.read('config.ini')
 
 projectLocation = os.getcwd()
 logfile = os.path.join(projectLocation, 'debug.log')
@@ -30,6 +34,10 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger("cert_logger")
+
+# cli args overrule cfg
+if cfg.getboolean('debug', 'log_debug'):
+    logger.setLevel(logging.DEBUG)
 if args.level == "debug":
     logger.setLevel(logging.DEBUG)
 
@@ -47,14 +55,14 @@ def run(cmd):
                               text=True)
         output, error = sp.communicate(timeout=10)
         rc = sp.wait()
-        if output:
+        if rc == 0:
             logger.debug(output)
-        if error:
+        else:
             logger.error(error)
     except subprocess.CalledProcessError as e:
-        logger.error(e.output)
+        logger.error("CalledProcessError: %s", e.output)
         logger.error("OpenSSL Return code: %s", e.returncode)
     except subprocess.TimeoutExpired as e:
-        logger.error(e.output)
+        logger.error("TimeoutExpired: %s", e.output)
 
     return rc

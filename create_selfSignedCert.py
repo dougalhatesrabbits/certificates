@@ -22,9 +22,9 @@ def generate_private_key(pwd, key):
         time.sleep(1)
         verify_private_key(key, pwd)
     except OSError as error:
-        logger.error(error)
+        logger.error("OSError %s", error)
     except CalledProcessError as error:
-        logger.error(error)
+        logger.error("CalledProcessError %s", error)
 
 
 def generate_csr(key, csr, pwd, cfg):
