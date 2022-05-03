@@ -12,14 +12,14 @@ to add certs to Apache webservers etc.
 Code is very process oriented and becoming unwieldy. Probably as a result of blindly following a blog.
 Needs to be rationalized using **kwargs around 3 common functions to produce
 
-####a) Keys
-####b) CSR
-####c) Certificates
+1. Keys
+2. CSR
+3. Certificates
 
 and logic in the functions that discern between the type of certificate using the kwarg
 i.e. RSA, ECC, CA, Self, Server.
 
-Can now start further rationilization and simplification of repeating code from v1.0 onwards :-)
+Can now start further rationalization and simplification of repeating code from v1.0 onwards :-)
 
 This is leading to classes and O-O.
 
