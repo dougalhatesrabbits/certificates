@@ -1,0 +1,17 @@
+[req]
+distinguished_name = req_distinguished_name
+prompt = no
+x509_extensions = v3_ca
+
+[req_distinguished_name]
+countryName             = UK
+stateOrProvinceName     = Cambs
+localityName            = Cambridge
+organizationName        = Labs
+OU                      = CyberSec
+commonName              = local
+
+[ v3_ca ]
+basicConstraints=critical,CA:TRUE
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid:always,issuer

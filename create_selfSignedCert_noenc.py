@@ -30,7 +30,7 @@ def generate_csr(key, csr, cfg):
                -new \
                -key server-noenc.key \
                -out server-noenc.csr \
-               -config tls/self_signed_certificate.cnf'.split()
+               -config tls/self_openssl.cnf'.split()
     command.pop(4)
     command.insert(4, key)
     command.pop(6)

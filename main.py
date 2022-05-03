@@ -1,10 +1,16 @@
 import os
-
-import create_selfSignedCert
+import time
+import create_selfCert
 import create_selfSignedCert_noenc
-import create_ECC_CA_Cert
-import revoke_Cert
+import create_ECC_Cert
+import create_hostCert
+
+import source_Project
+#import revoke_Cert
 from configparser import ConfigParser
+import subprocess
+
+from helper import logger
 
 cfg = ConfigParser()
 cfg.read('config.ini')
@@ -14,70 +20,135 @@ TODO: 'Encrypt log file possibly. Private keys are password protected with encry
 
 # Working area
 projectLocation = os.getcwd()
-baseTlsLocation = os.path.join(projectLocation, cfg.get('installation', 'baseTlsLocation'))
-opensslConf = os.path.join(baseTlsLocation, cfg.get('installation', 'opensslConf'))
-privateFolder = os.path.join(baseTlsLocation,  cfg.get('installation', 'privateFolder'))
-certsFolder = os.path.join(baseTlsLocation, cfg.get('installation', 'certsFolder'))
-serialFile = os.path.join(baseTlsLocation, cfg.get('installation', 'serialFile'))
-indexFile = os.path.join(baseTlsLocation,cfg.get('installation', 'indexFile'))
-# Private key password file (option)
-encPasswordFile = os.path.join(privateFolder, cfg.get('installation', 'encPasswordFile'))
 
 
-# Self-Signed
-selfKey = os.path.join(privateFolder, cfg.get('self-signed', 'selfkey'))
-selfCertificate = os.path.join(certsFolder, cfg.get('self-signed', 'selfCertificate'))
-selfCSR = os.path.join(certsFolder, cfg.get('self-signed', 'selfCSR'))
-selfKeyNoEnc = os.path.join(privateFolder, cfg.get('self-signed', 'selfKeyNoEnc'))
-selfCSRNoEnc = os.path.join(certsFolder, cfg.get('self-signed', 'selfCSRNoEnc'))
-selfCertificateNoEnc = os.path.join(certsFolder, cfg.get('self-signed', 'selfCertificateNoEnc'))
-self_opensslConf = os.path.join(baseTlsLocation, cfg.get('self-signed', 'self_opensslConf'))
+def main():
+    source_project()
+    create_self_signed_certificate()
+    create_ecc_certificate()
+    create_server_certificate()
+    create_client_certificate()
 
-# CA
-caKey = os.path.join(privateFolder, cfg.get('ca', 'caKey'))
-caCertificate = os.path.join(certsFolder, cfg.get('ca','caCertificate'))
-ca_opensslConf = os.path.join(baseTlsLocation, cfg.get('ca','ca_opensslConf'))
-caCrlFolder = os.path.join(baseTlsLocation, cfg.get('ca','caCrlFolder'))
-caCrlFile = os.path.join(caCrlFolder, cfg.get('ca', 'caCrlFile'))
 
-# Server
-serverFolder = os.path.join(baseTlsLocation, cfg.get('server', 'serverFolder'))
-serverKey = os.path.join(privateFolder, cfg.get('server', 'serverKey'))
-serverCSR = os.path.join(serverFolder, cfg.get('server', 'serverCSR'))
-serverCert = os.path.join(serverFolder, cfg.get('server', 'serverCert'))
-server_opensslConf = os.path.join(baseTlsLocation, cfg.get('server', 'server_opensslConf'))
+#loop through section will be preferred!
+def source_project():
+    # Create the project area
+    source_Project.create_folder(cfg.get('installation', 'certsFolder'))
+    source_Project.create_folder(cfg.get('installation', 'privateFolder'))
+    source_Project.create_folder(cfg.get('installation', 'newCertsFolder'))
+    source_Project.create_folder(cfg.get('installation', 'caCrlFolder'))
+    source_Project.create_file(cfg.get('installation', 'indexFile'))
+    source_Project.create_file(cfg.get('installation', 'serialFile'))
+    source_Project.create_file(cfg.get('installation', 'crlnumberFile'))
 
-# Client
-clientFolder = os.path.join(baseTlsLocation, cfg.get('client', 'clientFolder'))
-clientKey = os.path.join(privateFolder, cfg.get('client', 'clientKey'))
-clientCSR = os.path.join(clientFolder, cfg.get('client', 'clientCSR'))
-clientCert = os.path.join(clientFolder, cfg.get('client', 'clientCert'))
-client_opensslConf = os.path.join(baseTlsLocation, cfg.get('client', 'client_opensslConf'))
+    # find suitable openssl.cnf dependent on system/linux flavour and make hi-level changes to CA defaults
+    source_Project.get_source(cfg.get('misc', 'sourceOpenSSLConf'),
+                              cfg.get('ca', 'opensslConf'))
+    source_Project.edit_openssl(cfg.get('ca', 'opensslConf'),
+                                'dir',
+                                cfg.get('installation', 'baseTlsLocation'))
+    source_Project.edit_openssl(cfg.get('ca', 'opensslConf'),
+                                'certificate',
+                                cfg.get('ca', 'caCertificate'))
+    source_Project.edit_openssl(cfg.get('ca', 'opensslConf'),
+                                'private_key',
+                                cfg.get('ca', 'caKey'))
+
+
+def create_self_signed_certificate():
+    # ---Self-Signed RSA with X509 cert---
+    source_Project.get_source(projectLocation + "/tls/self_openssl.cnf",
+                              cfg.get('self', 'self_opensslConf'))
+    source_Project.edit_openssl(cfg.get('self', 'self_opensslConf'), "", "")
+
+    create_selfCert.generate_rsa_key(cfg.get('self', 'selfKey'),
+                                           cfg.get('misc', 'encPasswordFile'))
+
+    create_selfCert.generate_csr(cfg.get('self', 'selfkey'),
+                                       cfg.get('self', 'selfCSR'),
+                                       cfg.get('self', 'self_opensslConf'),
+                                       cfg.get('misc', 'encPasswordFile'))
+
+    create_selfCert.generate_x509_cert(cfg.get('self', 'selfCSR'),
+                                             cfg.get('self', 'selfkey'),
+                                             cfg.get('self', 'selfCertificate'),
+                                             cfg.get('misc', 'encPasswordFile'))
+
+
+def create_ecc_certificate():
+    # ---ECC CA---
+    source_Project.get_source(projectLocation + "/tls/self_openssl.cnf",
+                              cfg.get('self', 'self_opensslConf'))
+    source_Project.edit_openssl(cfg.get('self', 'self_opensslConf'), "", "")
+    # create_ECC_CA_Cert.list_curves()
+    create_ECC_Cert.generate_ecc_key(cfg.get('ca', 'caKey'))
+    create_ECC_Cert.generate_ecc_cert(cfg.get('self', 'self_opensslConf'),
+                                         cfg.get('ca', 'caKey'),
+                                         cfg.get('ca', 'caCertificate'))
+
+
+def create_server_certificate():
+    # ---Server---
+    source_Project.get_source(projectLocation + "/tls/server_openssl.cnf",
+                              cfg.get('server', 'server_opensslConf'))
+    source_Project.edit_openssl(cfg.get('server', 'server_opensslConf'), "", "")
+
+    create_ECC_Cert.generate_ecc_key(cfg.get('server', 'serverKey'))
+    create_hostCert.generate_csr(cfg.get('server', 'serverKey'),
+                                   cfg.get('server', 'serverCSR'),
+                                   cfg.get('server', 'server_opensslConf'))
+    create_hostCert.generate_cert(cfg.get('ca', 'caKey'),
+                                    cfg.get('ca', 'caCertificate'),
+                                    cfg.get('server', 'serverCSR'),
+                                    cfg.get('server', 'serverCert'),
+                                    cfg.get('ca', 'opensslConf'))
+
+
+def create_client_certificate():
+    # ---Client---
+    source_Project.get_source(projectLocation + "/tls/client_openssl.cnf",
+                              cfg.get('client', 'client_opensslConf'))
+    source_Project.edit_openssl(cfg.get('client', 'client_opensslConf'), "", "")
+
+    create_ECC_Cert.generate_ecc_key(cfg.get('client', 'clientKey'))
+    create_hostCert.generate_csr(cfg.get('client', 'clientKey'),
+                                   cfg.get('client', 'clientCSR'),
+                                   cfg.get('client', 'client_opensslConf'))
+    create_hostCert.generate_cert(cfg.get('ca', 'caKey'),
+                                    cfg.get('ca', 'caCertificate'),
+                                    cfg.get('client', 'clientCSR'),
+                                    cfg.get('client', 'clientCert'),
+                                    cfg.get('ca', 'opensslConf'))
 
 
 if __name__ == '__main__':
-    create_selfSignedCert.generate_private_key(encPasswordFile, selfKey)
-    create_selfSignedCert.generate_csr(selfKey, selfCSR, encPasswordFile, self_opensslConf)
-    create_selfSignedCert.generate_x509_cert(selfCSR, selfKey, selfCertificate, encPasswordFile)
-
-    create_selfSignedCert_noenc.generate_private_key(selfKeyNoEnc)
-    create_selfSignedCert_noenc.generate_csr(selfKeyNoEnc, selfCSRNoEnc, self_opensslConf)
-    create_selfSignedCert_noenc.generate_x509_cert(selfCSRNoEnc, selfKeyNoEnc, selfCertificateNoEnc)
+    main()
 
 
-    # ---CA---
-    create_ECC_CA_Cert.list_curves()
-    create_ECC_CA_Cert.generate_ecc_private_key(caKey)
-    create_ECC_CA_Cert.generate_ecc_ca_cert(ca_opensslConf, caKey, caCertificate)
-    # ---Server---
-    create_ECC_CA_Cert.generate_ecc_private_key(serverKey)
-    create_ECC_CA_Cert.generate_csr(serverKey, serverCSR, server_opensslConf)
-    create_ECC_CA_Cert.generate_cert(caKey, caCertificate, serverCSR, serverCert, server_opensslConf, indexFile)
-    # ---Client---
-    create_ECC_CA_Cert.generate_ecc_private_key(clientKey)
-    create_ECC_CA_Cert.generate_csr(clientKey, clientCSR, client_opensslConf)
-    create_ECC_CA_Cert.generate_cert(caKey, caCertificate, clientCSR, clientCert, client_opensslConf, indexFile)
-    create_ECC_CA_Cert.list_files(projectLocation)
 
-    revoke_Cert.revoke_cert(server_opensslConf, serverCert, indexFile)
-    revoke_Cert.generate_revocation_list(server_opensslConf, caCrlFile)
+    ##############################
+    # --- Now do some work --- :-)
+    ##############################
+
+
+    '''
+    # --- Self-Signed with no passphrase on private key---
+    create_selfSignedCert_noenc.generate_rsa_key(cfg.get('installation', 'selfKeyNoEnc'))
+    create_selfSignedCert_noenc.generate_csr(cfg.get('installation', 'selfKeyNoEnc'),
+                                             cfg.get('installation', 'selfCSRNoEnc'),
+                                             cfg.get('installation', 'self_opensslConf'))
+    create_selfSignedCert_noenc.generate_x509_cert(cfg.get('installation', 'selfCSRNoEnc'),
+                                                   cfg.get('installation', 'selfKeyNoEnc'),
+                                                   cfg.get('installation', 'selfCertificateNoEnc'))
+    '''
+
+
+
+
+
+
+
+    #revoke_Cert.revoke_cert(server_opensslConf, serverCert, indexFile)
+    #revoke_Cert.generate_revocation_list(server_opensslConf, caCrlFile)
+
+    # create_ECC_CA_Cert.list_files(projectLocation)

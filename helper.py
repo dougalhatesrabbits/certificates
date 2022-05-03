@@ -16,9 +16,9 @@ log_format = (
 parser = argparse.ArgumentParser()
 
 parser.add_argument('-l', '--log',
-                    choices=('error', 'debug'),
+                    choices=('error', 'warning', 'debug'),
                     dest='level',
-                    default='error',
+                    #default='warning',
                     help='Sets the logging level',
                     type=str
                     )
@@ -26,7 +26,7 @@ parser.add_argument('--version', action='version', version='%(prog)s 0.7')
 args = parser.parse_args()
 
 logging.basicConfig(
-    level=logging.ERROR,
+    level=logging.WARNING,
     format=log_format,
     handlers=[
         logging.FileHandler(logfile),
@@ -36,10 +36,18 @@ logging.basicConfig(
 logger = logging.getLogger("cert_logger")
 
 # cli args overrule cfg
-if cfg.getboolean('debug', 'log_debug'):
+if cfg.get('logging', 'log_level') == 'debug':
     logger.setLevel(logging.DEBUG)
+if cfg.get('logging', 'log_level') == 'warning':
+    logger.setLevel(logging.WARNING)
+if cfg.get('logging', 'log_level') == 'error':
+    logger.setLevel(logging.ERROR)
 if args.level == "debug":
     logger.setLevel(logging.DEBUG)
+if args.level == "warning":
+    logger.setLevel(logging.WARNING)
+if args.level == "error":
+    logger.setLevel(logging.ERROR)
 
 
 # https://docs.python.org/3.8/library/subprocess.html#
