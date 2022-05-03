@@ -1,0 +1,50 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 2 (0x2)
+        Signature Algorithm: ecdsa-with-SHA256
+        Issuer: C=UK, ST=Cambs, L=Cambridge, O=Labs, OU=CyberSec, CN=local
+        Validity
+            Not Before: May  3 00:18:46 2022 GMT
+            Not After : May  3 00:18:46 2023 GMT
+        Subject: C=UK, ST=Cambs, O=Labs, OU=CyberSec, CN=client
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:47:4f:f3:eb:82:ca:b6:73:e9:c4:ad:89:36:91:
+                    37:20:7c:96:47:a8:23:20:bb:94:b3:0f:6b:20:1f:
+                    16:54:e6:cb:22:45:bb:79:15:1f:c5:40:0a:83:7b:
+                    51:94:a4:98:bf:9a:f1:97:ee:be:74:0c:6c:48:29:
+                    40:cc:4f:06:86
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Comment: 
+                OpenSSL Generated Certificate
+            X509v3 Subject Key Identifier: 
+                C2:D0:83:3E:90:15:BC:3C:36:37:6E:A5:89:45:26:D9:D1:98:5F:E1
+            X509v3 Authority Key Identifier: 
+                keyid:68:E8:DD:C5:66:83:05:F9:FB:CA:56:2D:22:28:B8:0E:92:38:38:0D
+
+    Signature Algorithm: ecdsa-with-SHA256
+         30:45:02:21:00:a7:7d:9b:ab:12:d0:40:92:e2:f7:1e:b0:60:
+         19:9b:ec:4c:fd:22:9d:08:b8:54:db:fc:16:11:cb:7f:65:1b:
+         44:02:20:72:ab:13:6a:e5:a9:e6:aa:4e:ba:fb:7d:e7:b5:b8:
+         cb:56:20:bf:c7:9c:22:a3:07:df:be:6e:26:7e:11:63:e7
+-----BEGIN CERTIFICATE-----
+MIICHTCCAcOgAwIBAgIBAjAKBggqhkjOPQQDAjBjMQswCQYDVQQGEwJVSzEOMAwG
+A1UECAwFQ2FtYnMxEjAQBgNVBAcMCUNhbWJyaWRnZTENMAsGA1UECgwETGFiczER
+MA8GA1UECwwIQ3liZXJTZWMxDjAMBgNVBAMMBWxvY2FsMB4XDTIyMDUwMzAwMTg0
+NloXDTIzMDUwMzAwMTg0NlowUDELMAkGA1UEBhMCVUsxDjAMBgNVBAgMBUNhbWJz
+MQ0wCwYDVQQKDARMYWJzMREwDwYDVQQLDAhDeWJlclNlYzEPMA0GA1UEAwwGY2xp
+ZW50MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAER0/z64LKtnPpxK2JNpE3IHyW
+R6gjILuUsw9rIB8WVObLIkW7eRUfxUAKg3tRlKSYv5rxl+6+dAxsSClAzE8GhqN7
+MHkwCQYDVR0TBAIwADAsBglghkgBhvhCAQ0EHxYdT3BlblNTTCBHZW5lcmF0ZWQg
+Q2VydGlmaWNhdGUwHQYDVR0OBBYEFMLQgz6QFbw8NjdupYlFJtnRmF/hMB8GA1Ud
+IwQYMBaAFGjo3cVmgwX5+8pWLSIouA6SODgNMAoGCCqGSM49BAMCA0gAMEUCIQCn
+fZurEtBAkuL3HrBgGZvsTP0inQi4VNv8FhHLf2UbRAIgcqsTauWp5qpOuvt957W4
+y1Ygv8ecIqMH375uJn4RY+c=
+-----END CERTIFICATE-----
