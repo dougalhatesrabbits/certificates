@@ -63,3 +63,31 @@ def verify_crl(crl):
 
     verify_crl_serial(crl)
 
+    # create bundle against revoked cert
+    '''
+    command = "cat certs/cacert.pem crl/rootca.crl > /tmp/test.pem".split()
+
+    command.pop(1)
+    command.insert(1, cfg.get('root', 'rootCert'))
+    command.pop(2)
+    command.insert(2, cfg.get('root', 'caCrlFile'))
+    print(command)
+    run(command)
+    '''
+    with open(cfg.get('root', 'rootCert'), 'r') as f_in, open('/tmp/test.pem', 'a+') as f:
+        cert = f_in.readlines()
+        f.writelines(cert)
+    with open(cfg.get('root', 'caCrlFile'), 'r') as f_in, open('/tmp/test.pem', 'a+') as f:
+        crl = f_in.readlines()
+        f.writelines(crl)
+
+    command = "openssl verify -extended_crl -verbose -CAfile /tmp/test.pem -crl_check /certs/server-1.crt".split()
+    command.pop(7)
+    command.insert(7, cfg.get('server', 'serverCert'))
+    run(command)
+    os.remove('/tmp/test.pem')
+    print("\nIf we get an error similar to:")
+    print("error 20 at 0 depth lookup: unable to get local issuer certificate\n")
+    print("Then this proves the certificate is revoked :-)")
+
+

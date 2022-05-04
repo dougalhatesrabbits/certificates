@@ -82,16 +82,16 @@ def run(cmd):
 
 
 def verify_rootca_database(index):
-    with open(index, "r+") as f:
+    with open(index, "r") as f:
         print("\nIndex file entry\n----------------")
         print(f.read())
 
 
 def verify_crl_serial(crl):
-    with open(crl, "r+") as f:
+    with open(crl, "r") as f:
         print("\nCRL file entry\n----------------")
         print(f.read())
 
-    with open(cfg.get('installation', 'crlnumberFile'), "r+") as f:
+    with open(cfg.get('installation', 'crlnumberFile'), "r") as f:
         print("\nCRL index entry\n----------------")
         print(f.read())

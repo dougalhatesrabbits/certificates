@@ -1,0 +1,12 @@
+V	230504101542Z		01	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=server
+V	230504101545Z		02	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=client
+V	230504145307Z		03	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=server.com
+V	230504145310Z		04	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=client.com
+V	230504150501Z		05	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=server3.com
+V	230504150504Z		06	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=client3.com
+V	230504150600Z		07	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=server4.com
+V	230504150603Z		08	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=client4.com
+V	230504150637Z		09	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=server2.com
+V	230504150640Z		0A	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=client2.com
+R	230504150738Z	220504161605Z	0B	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=server1.com
+V	230504150741Z		0C	unknown	/C=UK/ST=Cambs/O=Labs/OU=CyberSec/CN=client1.com
