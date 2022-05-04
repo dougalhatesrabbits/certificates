@@ -1,5 +1,6 @@
 [req]
 distinguished_name = req_distinguished_name
+x509_extensions = v3_ca
 prompt = no
 
 [req_distinguished_name]
@@ -9,3 +10,12 @@ localityName            = Cambridge
 organizationName        = Labs
 OU                      = CyberSec
 commonName              = client
+
+[ v3_ca ]
+basicConstraints = CA:FALSE
+nsCertType = server, email
+nsComment = "OpenSSL Generated Client Certificate"
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = clientAuth, serverAuth

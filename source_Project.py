@@ -71,7 +71,7 @@ def edit_openssl(ssl, search, replace):
 
     # now edit original
     input_f = open(ssl, 'r')
-    output_f = open(cfg.get('misc', 'temp'), 'w')
+    output_f = open(cfg.get('runtime', 'temp'), 'w')
 
     with input_f, output_f:
         for lines in input_f:
@@ -86,8 +86,11 @@ def edit_openssl(ssl, search, replace):
 
     # update
     try:
-        shutil.copyfile(cfg.get('misc', 'temp'), ssl)
+        shutil.copyfile(cfg.get('runtime', 'temp'), ssl)
     except OSError as error:
         logger.error(error)
+
+
+
 
 

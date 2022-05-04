@@ -1,14 +1,16 @@
 import time
 import os
 from subprocess import Popen, PIPE, CalledProcessError
-from helper import run, logger
+from helper import run, logger, verify_rootca_database, verify_crl_serial
+
+from configparser import ConfigParser
+cfg = ConfigParser()
+cfg.read('config.ini')
 
 
-def revoke_cert(ssl, cert, index):
+def revoke_cert(ssl, cert):
     logger.debug("*** revoke_cert ***")
-    command = "openssl ca \
-               -config /root/tls/openssl.cnf \
-               -revoke /certs/server-1.crt".split()
+    command = cfg.get('root', 'cmdRevokeCert').split()
     command.pop(3)
     command.insert(3, ssl)
     command.pop(5)
@@ -23,21 +25,16 @@ def revoke_cert(ssl, cert, index):
     except CalledProcessError as error:
         logger.error(error)
 
-    with open(index, "r+") as f:
-        print("\nIndex file entry\n----------------")
-        print(f.read())
+    verify_rootca_database(cfg.get('installation', 'indexFile'))
 
 
-def generate_revocation_list(cfg, crl):
+def create_revocation_list(ssl, crl):
     logger.debug("*** generate_revocation_list ***")
-    command = "openssl ca \
-               -config /root/tls/openssl.cnf \
-               -gencrl \
-               -out  /root/tls/crl/rootca.crl".split()
+    command = cfg.get('root', 'cmd_generateCRL').split()
     command.pop(3)
-    command.insert(3, cfg)
-    command.pop(5)
-    command.insert(5, crl)
+    command.insert(3, ssl)
+    command.pop(6)
+    command.insert(6, crl)
     try:
         logger.debug(("Command executed:", ' '.join(command)))
         rc = run(command)
@@ -52,10 +49,7 @@ def generate_revocation_list(cfg, crl):
 
 def verify_crl(crl):
     logger.debug("*** verify_crl ***")
-    command = 'openssl crl  \
-              -in /root/tls/crl/rootca.crl \
-              -text \
-              -noout'.split()
+    command = cfg.get('root', 'cmd_verifyCRL').split()
     command.pop(3)
     command.insert(3, crl)
     try:
@@ -66,4 +60,6 @@ def verify_crl(crl):
         logger.error(error)
     except CalledProcessError as error:
         logger.error(error)
+
+    verify_crl_serial(crl)
 

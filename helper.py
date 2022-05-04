@@ -11,7 +11,7 @@ cfg.read('config.ini')
 projectLocation = os.getcwd()
 logfile = os.path.join(projectLocation, 'debug.log')
 log_format = (
-    "[%(asctime)s] %(levelname)-8s %(name)-12s %(message)s")
+    "[%(asctime)s] %(levelname)-8s %(name)-12s %(message)s [%(filename)s %(lineno)d]")
 
 parser = argparse.ArgumentParser()
 
@@ -22,7 +22,12 @@ parser.add_argument('-l', '--log',
                     help='Sets the logging level',
                     type=str
                     )
-parser.add_argument('--version', action='version', version='%(prog)s 0.7')
+parser.add_argument('--version', action='version', version='%(prog)s 0.9')
+parser.add_argument('-cn', '--common',
+                    dest='common',
+                    help='Sets the Common Name in openssl config',
+                    type=str
+                    )
 args = parser.parse_args()
 
 logging.basicConfig(
@@ -36,11 +41,11 @@ logging.basicConfig(
 logger = logging.getLogger("cert_logger")
 
 # cli args overrule cfg
-if cfg.get('logging', 'log_level') == 'debug':
+if cfg.get('runtime', 'log_level') == 'debug':
     logger.setLevel(logging.DEBUG)
-if cfg.get('logging', 'log_level') == 'warning':
+if cfg.get('runtime', 'log_level') == 'warning':
     logger.setLevel(logging.WARNING)
-if cfg.get('logging', 'log_level') == 'error':
+if cfg.get('runtime', 'log_level') == 'error':
     logger.setLevel(logging.ERROR)
 if args.level == "debug":
     logger.setLevel(logging.DEBUG)
@@ -74,3 +79,19 @@ def run(cmd):
         logger.error("TimeoutExpired: %s", e.output)
 
     return rc
+
+
+def verify_rootca_database(index):
+    with open(index, "r+") as f:
+        print("\nIndex file entry\n----------------")
+        print(f.read())
+
+
+def verify_crl_serial(crl):
+    with open(crl, "r+") as f:
+        print("\nCRL file entry\n----------------")
+        print(f.read())
+
+    with open(cfg.get('installation', 'crlnumberFile'), "r+") as f:
+        print("\nCRL index entry\n----------------")
+        print(f.read())

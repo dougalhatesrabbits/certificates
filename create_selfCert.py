@@ -1,21 +1,21 @@
 import time
 from helper import run, logger
 from subprocess import CalledProcessError
-import subprocess
 
 from configparser import ConfigParser
 cfg = ConfigParser()
 cfg.read('config.ini')
 
 
-def generate_rsa_key(key, pwd):
+def generate_rsa_key(key, pwd=None):
     logger.debug("*** generate_private_key ***")
     command = cfg.get('commands', 'cmdPrivKeyRSA').split()
-    arg = "file:" + pwd
-    command.pop(3)
-    command.insert(3, key)
-    command.pop(5)
-    command.insert(5, arg)
+    command.pop(4)
+    command.insert(4, key)
+    if pwd:
+        arg = "file:" + pwd
+        command.pop(6)
+        command.insert(6, arg)
     try:
         logger.debug(("Command executed:", ' '.join(command)))
         rc = run(command)
@@ -112,12 +112,12 @@ def generate_x509_cert(csr, key, crt, pwd):
         logger.error(error)
 
 
-def verify_self_signed_cert(crt):
+def verify_self_signed_cert(cert):
     logger.debug("*** verify_self_signed_cert ***")
 
     command = cfg.get('commands', 'cmdVerifySelfCert').split()
     command.pop(5)
-    command.insert(5, crt)
+    command.insert(5, cert)
     try:
         logger.debug(("Command executed:", ' '.join(command)))
         rc = run(command)

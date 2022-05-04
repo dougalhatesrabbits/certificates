@@ -1,14 +1,19 @@
 from helper import run, logger
 from subprocess import CalledProcessError
 import time
+from configparser import ConfigParser
+
+cfg = ConfigParser()
+cfg.read('config.ini')
 
 
-def generate_private_key(key):
+def generate_rsa_key(key):
     logger.debug("*** generate_private_key ***")
+    '''
     command = 'openssl genrsa \
                -out server-noenc.key 4096'.split()
-    # genpkey has superceded genrsa
-    # cmd = 'openssl genpkey -passout file:mypass.enc -out server.key 4096'.split()
+               '''
+    command = cfg.get('commands', 'cmdPrivKeyRSA-noenc').split()
     command.pop(3)
     command.insert(3, key)
 
@@ -17,7 +22,29 @@ def generate_private_key(key):
         rc = run(command)
         logger.debug("*** generate_private_key *** return code: %s", rc)
         time.sleep(1)
-        verify_private_key(key)
+        verify_rsa_key(key)
+    except OSError as error:
+        logger.error(error)
+    except CalledProcessError as error:
+        logger.error(error)
+
+
+def verify_rsa_key(key):
+    logger.debug("*** verify_private_key ***")
+    '''
+    command = 'openssl rsa \
+               -noout \
+               -text \
+               -in server-noenc.key'.split()
+               '''
+    command = cfg.get('commands', 'cmdVerifyPrivKeyRSA-noenc').split()
+    command.pop(5)
+    command.insert(5, key)
+
+    try:
+        logger.debug(("Command executed:", ' '.join(command)))
+        rc = run(command)
+        logger.debug("*** verify_private_key *** return code: %s", rc)
     except OSError as error:
         logger.error(error)
     except CalledProcessError as error:
@@ -76,23 +103,7 @@ def generate_x509_cert(csr, key, crt):
         logger.error(error)
 
 
-def verify_private_key(key):
-    logger.debug("*** verify_private_key ***")
-    command = 'openssl rsa \
-               -noout \
-               -text \
-               -in server-noenc.key'.split()
-    command.pop(5)
-    command.insert(5, key)
 
-    try:
-        logger.debug(("Command executed:", ' '.join(command)))
-        rc = run(command)
-        logger.debug("*** verify_private_key *** return code: %s", rc)
-    except OSError as error:
-        logger.error(error)
-    except CalledProcessError as error:
-        logger.error(error)
 
 
 def verify_csr(csr):
