@@ -10,7 +10,7 @@ cfg.read('config.ini')
 
 def revoke_cert(ssl, cert):
     logger.debug("*** revoke_cert ***")
-    command = cfg.get('root', 'cmdRevokeCert').split()
+    command = cfg.get('root', 'cmd_RevokeCert').split()
     command.pop(3)
     command.insert(3, ssl)
     command.pop(5)
@@ -19,7 +19,7 @@ def revoke_cert(ssl, cert):
         logger.debug(("Command executed:", ' '.join(command)))
         rc = run(command)
         logger.debug("*** revoke_cert *** return code: %s", rc)
-        time.sleep(1)
+        time.sleep(0.1)
     except OSError as error:
         logger.error(error)
     except CalledProcessError as error:
@@ -39,7 +39,7 @@ def create_revocation_list(ssl, crl):
         logger.debug(("Command executed:", ' '.join(command)))
         rc = run(command)
         logger.debug("*** generate_revocation_list *** return code: %s", rc)
-        time.sleep(1)
+        time.sleep(0.1)
         verify_crl(crl)
     except OSError as error:
         logger.error(error)
@@ -64,16 +64,6 @@ def verify_crl(crl):
     verify_crl_serial(crl)
 
     # create bundle against revoked cert
-    '''
-    command = "cat certs/cacert.pem crl/rootca.crl > /tmp/test.pem".split()
-
-    command.pop(1)
-    command.insert(1, cfg.get('root', 'rootCert'))
-    command.pop(2)
-    command.insert(2, cfg.get('root', 'caCrlFile'))
-    print(command)
-    run(command)
-    '''
     with open(cfg.get('root', 'rootCert'), 'r') as f_in, open('/tmp/test.pem', 'a+') as f:
         cert = f_in.readlines()
         f.writelines(cert)
@@ -84,6 +74,7 @@ def verify_crl(crl):
     command = "openssl verify -extended_crl -verbose -CAfile /tmp/test.pem -crl_check /certs/server-1.crt".split()
     command.pop(7)
     command.insert(7, cfg.get('server', 'serverCert'))
+    print("Running command:", ' '.join(command))
     run(command)
     os.remove('/tmp/test.pem')
     print("\nIf we get an error similar to:")

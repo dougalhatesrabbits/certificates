@@ -9,7 +9,7 @@ cfg.read('config.ini')
 
 def generate_rsa_key(key, pwd=None):
     logger.debug("*** generate_private_key ***")
-    command = cfg.get('commands', 'cmdPrivKeyRSA').split()
+    command = cfg.get('self', 'cmd_PrivKeyRSA').split()
     command.pop(4)
     command.insert(4, key)
     if pwd:
@@ -20,7 +20,7 @@ def generate_rsa_key(key, pwd=None):
         logger.debug(("Command executed:", ' '.join(command)))
         rc = run(command)
         logger.debug("*** generate_private_key *** return code: %s", rc)
-        time.sleep(1)
+        time.sleep(0.1)
         verify_rsa_key(key, pwd)
     except OSError as error:
         logger.error("OSError %s", error)
@@ -30,7 +30,7 @@ def generate_rsa_key(key, pwd=None):
 
 def verify_rsa_key(key, pwd):
     logger.debug("*** verify_private_key ***")
-    command = cfg.get('commands', 'cmdVerifyPrivKeyRSA').split()
+    command = cfg.get('self', 'cmd_VerifyPrivKeyRSA').split()
     command.pop(5)
     command.insert(5, key)
     arg = "file:" + pwd
@@ -48,7 +48,7 @@ def verify_rsa_key(key, pwd):
 
 def generate_csr(key, csr, cnf, pwd):
     logger.debug("*** generate_csr ***")
-    command = cfg.get('commands', 'cmdCSR').split()
+    command = cfg.get('self', 'cmd_CSR').split()
 
     command.pop(4)
     command.insert(4, key)
@@ -63,7 +63,7 @@ def generate_csr(key, csr, cnf, pwd):
         logger.debug(("Command executed:", ' '.join(command)))
         rc = run(command)
         logger.debug("*** generate_csr *** return code: %s", rc)
-        time.sleep(1)
+        time.sleep(0.1)
         verify_csr(csr)
     except OSError as error:
         logger.error(error)
@@ -74,7 +74,7 @@ def generate_csr(key, csr, cnf, pwd):
 def verify_csr(csr):
     logger.debug("*** verify_csr ***")
 
-    command = cfg.get('commands', 'cmdVerifyCSR').split()
+    command = cfg.get('self', 'cmd_VerifyCSR').split()
     command.pop(5)
     command.insert(5, csr)
     try:
@@ -90,7 +90,7 @@ def verify_csr(csr):
 def generate_x509_cert(csr, key, crt, pwd):
     logger.debug("*** generate_x509_cert ***")
 
-    command = cfg.get('commands', 'cmdX509SelfCert').split()
+    command = cfg.get('self', 'cmd_X509SelfCert').split()
     command.pop(6)
     command.insert(6, csr)
     command.pop(8)
@@ -104,7 +104,7 @@ def generate_x509_cert(csr, key, crt, pwd):
         logger.debug(("Command executed:", ' '.join(command)))
         rc = run(command)
         logger.debug("*** verify_private_key *** return code: %s", rc)
-        time.sleep(1)
+        time.sleep(0.1)
         verify_self_signed_cert(crt)
     except OSError as error:
         logger.error(error)
@@ -115,7 +115,7 @@ def generate_x509_cert(csr, key, crt, pwd):
 def verify_self_signed_cert(cert):
     logger.debug("*** verify_self_signed_cert ***")
 
-    command = cfg.get('commands', 'cmdVerifySelfCert').split()
+    command = cfg.get('self', 'cmd_VerifySelfCert').split()
     command.pop(5)
     command.insert(5, cert)
     try:

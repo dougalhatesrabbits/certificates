@@ -26,11 +26,8 @@ def main():
     #create_server_certificate()
     #create_client_certificate()
     #create_root_ca_and_sign_certs()
+    revoke_certificate()
 
-    revoke_Cert.revoke_cert(cfg.get('ca', 'opensslConf'),
-                            cfg.get('server', 'serverCert'))
-    revoke_Cert.create_revocation_list(cfg.get('ca', 'opensslConf'),
-                                       cfg.get('root', 'caCrlFile'))
 
     # WIP for next stage v1 onwards
     #create_key.generate_key(cfg.get('commands', 'cmdPrivKeyRSA'))
@@ -94,11 +91,11 @@ def create_self_signed_certificate_noenc():
 
     create_selfCert_noenc.generate_rsa_key(cfg.get('self', 'selfKeyNoEnc'))
     create_selfCert_noenc.generate_csr(cfg.get('self', 'selfkeyNoEnc'),
-                                 cfg.get('self', 'selfCSRNoEnc'),
-                                 cfg.get('self', 'self_opensslConf'))
+                                       cfg.get('self', 'selfCSRNoEnc'),
+                                       cfg.get('self', 'self_opensslConf'))
     create_selfCert_noenc.generate_x509_cert(cfg.get('self', 'selfCSRNoEnc'),
-                                       cfg.get('self', 'selfkeyNoEnc'),
-                                       cfg.get('self', 'selfCertificateNoEnc'))
+                                             cfg.get('self', 'selfkeyNoEnc'),
+                                             cfg.get('self', 'selfCertificateNoEnc'))
 
 
 def create_ecc_certificate():
@@ -123,13 +120,13 @@ def create_server_certificate():
 
     create_ECC_Cert.generate_ecc_key(cfg.get('server', 'serverKey'))
     create_hostCert.generate_csr(cfg.get('server', 'serverKey'),
-                                   cfg.get('server', 'serverCSR'),
-                                   cfg.get('server', 'server_opensslConf'))
+                                 cfg.get('server', 'serverCSR'),
+                                 cfg.get('server', 'server_opensslConf'))
     create_hostCert.generate_cert(cfg.get('ca', 'caKey'),
-                                    cfg.get('ca', 'caCertificate'),
-                                    cfg.get('server', 'serverCSR'),
-                                    cfg.get('server', 'serverCert'),
-                                    cfg.get('ca', 'opensslConf'))
+                                  cfg.get('ca', 'caCertificate'),
+                                  cfg.get('server', 'serverCSR'),
+                                  cfg.get('server', 'serverCert'),
+                                  cfg.get('ca', 'opensslConf'))
 
 
 def create_client_certificate():
@@ -142,13 +139,13 @@ def create_client_certificate():
 
     create_ECC_Cert.generate_ecc_key(cfg.get('client', 'clientKey'))
     create_hostCert.generate_csr(cfg.get('client', 'clientKey'),
-                                   cfg.get('client', 'clientCSR'),
-                                   cfg.get('client', 'client_opensslConf'))
+                                 cfg.get('client', 'clientCSR'),
+                                 cfg.get('client', 'client_opensslConf'))
     create_hostCert.generate_cert(cfg.get('ca', 'caKey'),
-                                    cfg.get('ca', 'caCertificate'),
-                                    cfg.get('client', 'clientCSR'),
-                                    cfg.get('client', 'clientCert'),
-                                    cfg.get('ca', 'opensslConf'))
+                                  cfg.get('ca', 'caCertificate'),
+                                  cfg.get('client', 'clientCSR'),
+                                  cfg.get('client', 'clientCert'),
+                                  cfg.get('ca', 'opensslConf'))
 
 
 def create_root_ca_and_sign_certs():
@@ -166,17 +163,18 @@ def create_root_ca_and_sign_certs():
                                      cfg.get('root', 'rootCert'),
                                      cfg.get('runtime', 'encPasswordFile'),
                                      cfg.get('self', 'self_opensslConf'))
-    create_rootCACert.create_server_key(cfg.get('runtime', 'encPasswordFile'),
-                                        cfg.get('server', 'serverKey'))
-    create_rootCACert.generate_csr(cfg.get('server', 'serverKey'),
-                                   cfg.get('server', 'serverCSR'),
-                                   cfg.get('runtime', 'encPasswordFile'),
-                                   cfg.get('self', 'self_opensslConf'))
     create_rootCACert.sign_server_cert(cfg.get('server', 'serverCSR'),
                                        cfg.get('root', 'rootCert'),
                                        cfg.get('root', 'rootKey'),
                                        cfg.get('server', 'serverCert'),
                                        cfg.get('runtime', 'encPasswordFile'))
+
+
+def revoke_certificate():
+    revoke_Cert.revoke_cert(cfg.get('ca', 'opensslConf'),
+                            cfg.get('server', 'serverCert'))
+    revoke_Cert.create_revocation_list(cfg.get('ca', 'opensslConf'),
+                                       cfg.get('root', 'caCrlFile'))
 
 
 if __name__ == '__main__':

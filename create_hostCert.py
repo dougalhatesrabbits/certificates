@@ -11,7 +11,7 @@ cfg.read('config.ini')
 def generate_csr(key, csr, ssl):
     logger.debug("*** generate_csr ***")
 
-    command = cfg.get('commands', 'cmdServerCSR').split()
+    command = cfg.get('server', 'cmd_ServerCSR').split()
     command.pop(4)
     command.insert(4, key)
     command.pop(6)
@@ -22,7 +22,7 @@ def generate_csr(key, csr, ssl):
         logger.debug(("Command executed:", ' '.join(command)))
         rc = run(command)
         logger.debug("*** generate_csr *** return code: %s", rc)
-        time.sleep(1)
+        time.sleep(0.1)
         verify_csr(csr)
     except OSError as error:
         logger.error(error)
@@ -33,7 +33,7 @@ def generate_csr(key, csr, ssl):
 def verify_csr(csr):
     logger.debug("*** verify_server_csr ***")
 
-    command = cfg.get('commands', 'cmdVerifyCSR').split()
+    command = cfg.get('self', 'cmd_VerifyCSR').split()
     command.pop(5)
     command.insert(5, csr)
     try:
@@ -50,7 +50,7 @@ def verify_csr(csr):
 def generate_cert(key, cacert, csr, cert, ssl):
     logger.debug("*** generate_cert ***")
 
-    command = cfg.get('commands', 'cmdServerCert').split()
+    command = cfg.get('server', 'cmd_ServerCert').split()
     command.pop(3)
     command.insert(3, key)
     command.pop(5)
@@ -74,7 +74,7 @@ def generate_cert(key, cacert, csr, cert, ssl):
             logger.error(error)
 
         logger.debug("*** generate_cert *** return code: %s", rc)
-        time.sleep(1)
+        time.sleep(0.1)
         verify_server_cert(cacert, cert, cfg.get('installation', 'indexFile'))
     except OSError as error:
         logger.error(error)
@@ -85,7 +85,7 @@ def generate_cert(key, cacert, csr, cert, ssl):
 def verify_server_cert(cacert, srvcert, index):
     logger.debug("*** verify_server_cert ***1/2")
 
-    command = cfg.get('commands', 'cmdVerifyServerCert').split()
+    command = cfg.get('server', 'cmd_VerifyServerCert').split()
     command.pop(3)
     command.insert(3, cacert)
     command.pop(4)
@@ -101,7 +101,7 @@ def verify_server_cert(cacert, srvcert, index):
 
     logger.debug("*** verify_server_cert ***2/2")
 
-    command = cfg.get('commands', 'cmdVerifySelfCert').split()
+    command = cfg.get('self', 'cmd_VerifySelfCert').split()
     command.pop(5)
     command.insert(5, srvcert)
     try:

@@ -36,14 +36,14 @@ def list_files(cwd):
 def generate_ecc_key(key):
     logger.debug("*** generate_ecc_private_key ***")
 
-    command = cfg.get('commands', 'cmdPrivKeyECC').split()
+    command = cfg.get('ca', 'cmd_PrivKeyECC').split()
     command.pop(3)
     command.insert(3, key)
     try:
         logger.debug(("Command executed:", ' '.join(command)))
         rc = run(command)
         logger.debug("*** generate_ecc_private_key *** return code: %s", rc)
-        time.sleep(1)
+        time.sleep(0.1)
         verify_ecc_key(key)
     except OSError as error:
         logger.error(error)
@@ -54,7 +54,7 @@ def generate_ecc_key(key):
 def verify_ecc_key(key):
     logger.debug("*** verify_ecc_private_key ***")
 
-    command = cfg.get('commands', 'cmdVerifyPrivKeyECC').split()
+    command = cfg.get('ca', 'cmd_VerifyPrivKeyECC').split()
     command.pop(3)
     command.insert(3, key)
     try:
@@ -72,7 +72,7 @@ def verify_ecc_key(key):
 def generate_ecc_cert(ssl, key, cert):
     logger.debug("*** generate_ca_cert ***")
 
-    command = cfg.get('commands', 'cmdX509CACert').split()
+    command = cfg.get('ca', 'cmd_X509CACert').split()
     command.pop(7)
     command.insert(7, ssl)
     command.pop(11)
@@ -83,7 +83,7 @@ def generate_ecc_cert(ssl, key, cert):
         logger.debug(("Command executed:", ' '.join(command)))
         rc = run(command)
         logger.debug("*** generate_ca_cert *** return code: %s", rc)
-        time.sleep(1)
+        time.sleep(0.1)
         verify_cert(cert, key)
     except OSError as error:
         logger.error(error)
@@ -94,7 +94,7 @@ def generate_ecc_cert(ssl, key, cert):
 def verify_cert(cert, key):
     logger.debug("*** verify_ca_cert 1/3***")
 
-    command = cfg.get('commands', 'cmdVerifySelfCert').split()
+    command = cfg.get('self', 'cmd_VerifySelfCert').split()
     command.pop(5)
     command.insert(5, cert)
     try:
@@ -108,7 +108,7 @@ def verify_cert(cert, key):
 
     logger.debug("*** verify_ca_cert 2/3***")
 
-    command = cfg.get('commands', 'cmdVerifySelfCert2').split()
+    command = cfg.get('self', 'cmd_VerifySelfCert2').split()
     command.pop(5)
     command.insert(5, cert)
     try:
@@ -122,7 +122,7 @@ def verify_cert(cert, key):
 
     logger.debug("*** verify_ca_cert 3/3***")
 
-    command = cfg.get('commands', 'cmdVerifySelfCert3').split()
+    command = cfg.get('self', 'cmd_VerifySelfCert3').split()
     command.pop(4)
     command.insert(4, key)
     try:
