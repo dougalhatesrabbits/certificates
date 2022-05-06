@@ -81,6 +81,26 @@ def run(cmd):
     return rc
 
 
+def run_out(cmd, out):
+    with open(out, 'w') as f:
+        try:
+
+            sp = subprocess.call(cmd,
+                                  shell=False,
+                                  stdout=f,
+                                  stderr=subprocess.STDOUT)
+            if sp == 0:
+                print("written certificate")
+
+        except subprocess.CalledProcessError as e:
+            logger.error("CalledProcessError: %s", e.output)
+            logger.error("OpenSSL Return code: %s", e.returncode)
+        except subprocess.TimeoutExpired as e:
+            logger.error("TimeoutExpired: %s", e.output)
+
+    #return rc
+
+
 def verify_rootca_database(index):
     with open(index, "r") as f:
         print("\nIndex file entry\n----------------")

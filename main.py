@@ -28,9 +28,11 @@ def main():
     #create_client_certificate()
     #create_root_ca_and_sign_certs()
     #revoke_certificate()
-    renew_Cert.renew_rootca(cfg.get('root', 'rootCert'),
+    renew_Cert.export_old_csr(cfg.get('root', 'rootCert'),
                             cfg.get('root', 'rootKey'),
-                            cfg.get('root', 'rootCSR'),
+                            cfg.get('root', 'rootCSR'))
+    renew_Cert.renew_cert(cfg.get('root', 'rootCSR'),
+                            cfg.get('root', 'rootKey'),
                             cfg.get('root', 'rootNewCert'))
 
     # WIP for next stage v1 onwards
