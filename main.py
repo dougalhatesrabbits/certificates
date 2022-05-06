@@ -8,6 +8,7 @@ import create_hostCert
 import create_rootCACert
 import source_Project
 import revoke_Cert
+import renew_Cert
 
 cfg = ConfigParser()
 cfg.read('config.ini')
@@ -26,8 +27,11 @@ def main():
     #create_server_certificate()
     #create_client_certificate()
     #create_root_ca_and_sign_certs()
-    revoke_certificate()
-
+    #revoke_certificate()
+    renew_Cert.renew_rootca(cfg.get('root', 'rootCert'),
+                            cfg.get('root', 'rootKey'),
+                            cfg.get('root', 'rootCSR'),
+                            cfg.get('root', 'rootNewCert'))
 
     # WIP for next stage v1 onwards
     #create_key.generate_key(cfg.get('commands', 'cmdPrivKeyRSA'))
