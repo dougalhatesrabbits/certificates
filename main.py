@@ -20,7 +20,7 @@ TODO: 'Encrypt log file possibly. Private keys are password protected with encry
 projectLocation = os.getcwd()
 
 def main():
-    #source_project()
+    source_project()
     #create_self_signed_certificate()
     #create_self_signed_certificate_noenc()
     #create_ecc_certificate()
@@ -28,12 +28,7 @@ def main():
     #create_client_certificate()
     #create_root_ca_and_sign_certs()
     #revoke_certificate()
-    renew_Cert.export_old_csr(cfg.get('root', 'rootCert'),
-                            cfg.get('root', 'rootKey'),
-                            cfg.get('root', 'rootCSR'))
-    renew_Cert.renew_cert(cfg.get('root', 'rootCSR'),
-                            cfg.get('root', 'rootKey'),
-                            cfg.get('root', 'rootNewCert'))
+    #renew_certificate()
 
     # WIP for next stage v1 onwards
     #create_key.generate_key(cfg.get('commands', 'cmdPrivKeyRSA'))
@@ -181,6 +176,15 @@ def revoke_certificate():
                             cfg.get('server', 'serverCert'))
     revoke_Cert.create_revocation_list(cfg.get('ca', 'opensslConf'),
                                        cfg.get('root', 'caCrlFile'))
+
+
+def renew_certificate():
+    renew_Cert.export_old_csr(cfg.get('root', 'rootCert'),
+                              cfg.get('root', 'rootKey'),
+                              cfg.get('root', 'rootCSR'))
+    renew_Cert.renew_cert(cfg.get('root', 'rootCSR'),
+                          cfg.get('root', 'rootKey'),
+                          cfg.get('root', 'rootNewCert'))
 
 
 if __name__ == '__main__':
