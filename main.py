@@ -21,8 +21,8 @@ projectLocation = os.getcwd()
 
 def main():
     source_project()
-    #create_self_signed_certificate()
-    #create_self_signed_certificate_noenc()
+    create_self_signed_certificate()
+    create_self_signed_certificate_noenc()
     #create_ecc_certificate()
     #create_server_certificate()
     #create_client_certificate()

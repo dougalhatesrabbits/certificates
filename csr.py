@@ -10,19 +10,20 @@ cfg = ConfigParser()
 cfg.read('config.ini')
 
 
-class protectedKey:
+class csr:
     """Keys used for CA's and hosts"""
     # self | root | server | client
-    name = None
-    type = None
+    type = cfg.get('key', 'type')
+    #type = 'root'
 
     def __init__(self):
         self._name = None
-        self._type = None
-        self._size = None
-        self._crypto = None
-        self._cipher = None
-        self._passphrase = None
+        self._config = None
+        self._commonName = None
+        self._messageDigest = None
+        self._config = None
+        #self._key = None
+        #self._passphrase = None
 
     @property
     def name(self):
@@ -35,17 +36,6 @@ class protectedKey:
             self._name = value
         else:
             raise ValueError("Parent folder does not exist")
-
-    @property
-    def type(self):
-        return self._type
-
-    @type.setter
-    def type(self, value):
-        if value in ('self', 'root', 'server', 'client'):
-            self._type = value
-        else:
-            raise ValueError("Type invalid")
 
     @property
     def size(self):
@@ -92,53 +82,50 @@ class protectedKey:
         else:
             raise ValueError("Passphrase invalid")
 
-    #@staticmethod
-    def generate(self, cmd):
-        logger.debug("*** generate_private_key ***")
-        command = cmd.split()
+    def generate_csr(key, csr, cnf, pwd):
+        logger.debug("*** generate_csr ***")
+        command = cfg.get('self', 'cmd_CSR').split()
+
+        command.pop(4)
+        command.insert(4, key)
+        command.pop(6)
+        command.insert(6, csr)
+        command.pop(8)
+        command.insert(8, cnf)
+        arg = "file:" + pwd
+        command.pop(10)
+        command.insert(10, arg)
         try:
             logger.debug(("Command executed:", ' '.join(command)))
             rc = run(command)
-            logger.debug("*** generate_private_key *** return code: %s", rc)
+            logger.debug("*** generate_csr *** return code: %s", rc)
             time.sleep(0.1)
-            #key.verify(newkey, pwd)
+            csr.verify_csr(csr)
         except OSError as error:
-            logger.error("OSError %s", error)
+            logger.error(error)
         except CalledProcessError as error:
-            logger.error("CalledProcessError %s", error)
+            logger.error(error)
 
-    def verify(self, cmd):
-        logger.debug("*** verify_private_key ***")
-        command = cmd.split()
+    def verify_csr(csr):
+        logger.debug("*** verify_csr ***")
+
+        command = cfg.get('self', 'cmd_VerifyCSR').split()
+        command.pop(5)
+        command.insert(5, csr)
         try:
             logger.debug(("Command executed:", ' '.join(command)))
             rc = run(command)
-            logger.debug("*** verify_private_key *** return code: %s", rc)
+            logger.debug("*** verify_csr *** return code: %s", rc)
         except OSError as error:
             logger.error(error)
         except CalledProcessError as error:
             logger.error(error)
 
 
-#class unprotectedKey(protectedKey):
-#    pass
 
 
-key = protectedKey()
-key.name = cfg.get('key', 'name')
-key.type = cfg.get('key', 'type')
-key.size = cfg.getint('key', 'size')
-key.crypto = cfg.get('key', 'public_crypto')
-key.cipher = cfg.get('key', 'private_cipher')
-key.passphrase = cfg.get('key', 'encPasswordFile')
-print(key.name)
-print(key.type)
-print(key.size)
-print(key.crypto)
-print(key.cipher)
-print(key.passphrase)
 
-key.generate(cfg.get('ca', 'cmd_PrivKeyECC'))
-key.verify(cfg.get('ca', 'cmd_VerifyPrivKeyECC'))
+
+
 
 

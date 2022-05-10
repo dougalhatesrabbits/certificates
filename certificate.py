@@ -10,19 +10,21 @@ cfg = ConfigParser()
 cfg.read('config.ini')
 
 
-class protectedKey:
+class certificate:
     """Keys used for CA's and hosts"""
     # self | root | server | client
-    name = None
-    type = None
+    type = cfg.get('key', 'type')
+    #type = 'root'
 
     def __init__(self):
         self._name = None
+        #self._config = None
+        #self._commonName = None
+        #self._messageDigest = None
+        self._validity = None
         self._type = None
-        self._size = None
-        self._crypto = None
-        self._cipher = None
-        self._passphrase = None
+        #self._key = None
+        #self._passphrase = None
 
     @property
     def name(self):
@@ -35,17 +37,6 @@ class protectedKey:
             self._name = value
         else:
             raise ValueError("Parent folder does not exist")
-
-    @property
-    def type(self):
-        return self._type
-
-    @type.setter
-    def type(self, value):
-        if value in ('self', 'root', 'server', 'client'):
-            self._type = value
-        else:
-            raise ValueError("Type invalid")
 
     @property
     def size(self):
@@ -92,53 +83,50 @@ class protectedKey:
         else:
             raise ValueError("Passphrase invalid")
 
-    #@staticmethod
-    def generate(self, cmd):
-        logger.debug("*** generate_private_key ***")
-        command = cmd.split()
-        try:
-            logger.debug(("Command executed:", ' '.join(command)))
-            rc = run(command)
-            logger.debug("*** generate_private_key *** return code: %s", rc)
-            time.sleep(0.1)
-            #key.verify(newkey, pwd)
-        except OSError as error:
-            logger.error("OSError %s", error)
-        except CalledProcessError as error:
-            logger.error("CalledProcessError %s", error)
+    def generate_x509_cert(csr, key, crt, pwd):
+        logger.debug("*** generate_x509_cert ***")
 
-    def verify(self, cmd):
-        logger.debug("*** verify_private_key ***")
-        command = cmd.split()
+        command = cfg.get('self', 'cmd_X509SelfCert').split()
+        command.pop(6)
+        command.insert(6, csr)
+        command.pop(8)
+        command.insert(8, key)
+        command.pop(10)
+        command.insert(10, crt)
+        arg = "file:" + pwd
+        command.pop(12)
+        command.insert(12, arg)
         try:
             logger.debug(("Command executed:", ' '.join(command)))
             rc = run(command)
             logger.debug("*** verify_private_key *** return code: %s", rc)
+            time.sleep(0.1)
+            certificate.verify_self_signed_cert(crt)
+        except OSError as error:
+            logger.error(error)
+        except CalledProcessError as error:
+            logger.error(error)
+
+    def verify_self_signed_cert(cert):
+        logger.debug("*** verify_self_signed_cert ***")
+
+        command = cfg.get('self', 'cmd_VerifySelfCert').split()
+        command.pop(5)
+        command.insert(5, cert)
+        try:
+            logger.debug(("Command executed:", ' '.join(command)))
+            rc = run(command)
+            logger.debug("*** verify_self_signed_cert *** return code: %s", rc)
         except OSError as error:
             logger.error(error)
         except CalledProcessError as error:
             logger.error(error)
 
 
-#class unprotectedKey(protectedKey):
-#    pass
 
 
-key = protectedKey()
-key.name = cfg.get('key', 'name')
-key.type = cfg.get('key', 'type')
-key.size = cfg.getint('key', 'size')
-key.crypto = cfg.get('key', 'public_crypto')
-key.cipher = cfg.get('key', 'private_cipher')
-key.passphrase = cfg.get('key', 'encPasswordFile')
-print(key.name)
-print(key.type)
-print(key.size)
-print(key.crypto)
-print(key.cipher)
-print(key.passphrase)
 
-key.generate(cfg.get('ca', 'cmd_PrivKeyECC'))
-key.verify(cfg.get('ca', 'cmd_VerifyPrivKeyECC'))
+
+
 
 
