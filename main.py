@@ -21,10 +21,10 @@ projectLocation = os.getcwd()
 
 def main():
     source_project()
-    create_self_signed_certificate()
-    create_self_signed_certificate_noenc()
+    #create_self_signed_certificate()
+    #create_self_signed_certificate_noenc()
     #create_ecc_certificate()
-    #create_server_certificate()
+    create_server_certificate()
     #create_client_certificate()
     #create_root_ca_and_sign_certs()
     #revoke_certificate()
@@ -119,7 +119,10 @@ def create_server_certificate():
                                 "commonName",
                                 cfg.get('server', 'serverCommonName'))
 
-    create_ECC_Cert.generate_ecc_key(cfg.get('server', 'serverKey'))
+    create_ECC_Cert.generate_ecc_key(cfg.get('ca', 'caKey'))
+    create_ECC_Cert.generate_ecc_cert(cfg.get('self', 'self_opensslConf'),
+                                      cfg.get('ca', 'caKey'),
+                                      cfg.get('ca', 'caCertificate'))
     create_hostCert.generate_csr(cfg.get('server', 'serverKey'),
                                  cfg.get('server', 'serverCSR'),
                                  cfg.get('server', 'server_opensslConf'))
